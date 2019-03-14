@@ -7,6 +7,9 @@ cli_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 cli_sock.connect((HOST, PORT))
 
+if cli_sock:
+    print("Connected to " + HOST + " @", PORT)
+
 message = "RDBHELLO FROM THE OTHERSIIIIDDDE!!"
 cli_sock.send(message.encode('ascii'))
 

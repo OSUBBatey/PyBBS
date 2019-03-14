@@ -14,30 +14,32 @@ def queue_socket(sock, p_list):
     p_list.register(cli_sock, event, data=payload)
 
 
-def process_current(s_key, e_mask, db):
+def process_current(s_key, e_mask, db, tdb):
 
     if e_mask is selectors.EVENT_READ:
-        receive(s_key, db)
+        receive(s_key, db, tdb)
     elif e_mask is selectors.EVENT_WRITE:
         send(s_key, db)
 
 
-def receive(sock_key, active_db):
+def receive(sock_key, active_db, token_db):
     cli_conn = sock_key.fileobj
     inc_data = cli_conn.recv(MSG_SIZE)
 
     if inc_data:
-        action = parse_header(inc_data)
-        if action == 'W':
-            active_db.write(inc_data.decode()[3:])
-            m_out = "Message Written!!!"
-            cli_conn.send(m_out.encode("ascii"))
-        elif action == 'R':
-            # TODO:Prepare read
-            active_db.read(cli_conn)
-
+        if token_db.is_auth(inc_data):
+            action = parse_header(inc_data)
+            if action == 'W':
+                active_db.write(inc_data.decode()[3:])
+                m_out = "Message Written!!!"
+                cli_conn.send(m_out.encode("ascii"))
+            elif action == 'R':
+                # TODO:Prepare read
+                active_db.read(cli_conn)
+            else:
+                print("INVALID OPERATION REQUEST")
         else:
-            print("INVALID OPERATION REQUEST")
+            token_db.auth_user(inc_data)
         #  msg = inc_data.decode()
 
         # if msg[:2] == 'EK':

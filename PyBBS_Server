@@ -1,0 +1,41 @@
+import socket
+import selectors
+from ServerUtils import queue_socket
+from ServerUtils import process_current
+from PyBBS_DB import BBSDb
+
+HOST = '127.0.0.1'
+PORT = 55555
+MAX_CON = 1
+stop_loop = False
+port_list = selectors.DefaultSelector()
+default_DB = BBSDb("default")
+
+# create the server's main socket
+serv_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# bind the socket to the host and designated port
+serv_sock.bind((HOST, PORT))
+
+# set socket as a non blocking listening socket
+serv_sock.listen(MAX_CON)
+print('Server Started!!!!')
+print('listening @ ', (HOST, PORT))
+serv_sock.setblocking(False)
+
+# register socket in selector
+port_list.register(serv_sock, selectors.EVENT_READ, data=None)
+
+# handle client connections
+# TODO: Fix Exit Point For Loop (stop_loop)
+while True:
+    sock_event_list = port_list.select(timeout=None)
+    for s_key, event_mask in sock_event_list:
+        if s_key.data is None:
+            queue_socket(s_key.fileobj, port_list)
+
+        else:
+            process_current(s_key, event_mask, default_DB)
+    if stop_loop:
+        break
+
+serv_sock.close()

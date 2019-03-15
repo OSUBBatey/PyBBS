@@ -2,7 +2,7 @@ import socket
 import selectors
 from ServerUtils import queue_socket
 from ServerUtils import process_current
-from PyBBS_DB import BBSDb
+from PyBBS_DB_Log_Utils import BBSDb
 from AuthUtils import UserDB
 
 HOST = '127.0.0.1'
@@ -10,8 +10,8 @@ PORT = 55555
 MAX_CON = 1
 stop_loop = False
 port_list = selectors.DefaultSelector()
-default_DB = BBSDb("default")
-auth_tokens = UserDB()
+master_DB = BBSDb()
+auth_DB = UserDB()
 
 # create the server's main socket
 serv_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -36,7 +36,7 @@ while True:
             queue_socket(s_key.fileobj, port_list)
 
         else:
-            process_current(s_key, event_mask, default_DB, auth_tokens)
+            process_current(s_key, event_mask, master_DB, auth_DB)
     if stop_loop:
         break
 

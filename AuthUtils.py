@@ -40,20 +40,35 @@ class UserDB:
         else:
             return False
 
-    def is_auth(self):
-        self.tdb
+    def is_auth(self, payload):
+        name = self.parse_name(payload)
+        token = self.parse_token(payload)
+        if name in self.udict:
+            return self.tdb.verif_token(name, token)
+        else:
+            print("Must Login for Authorization!")
+            return False
         # TODO: FULFILL PRINT COMMANDS BELOW
-        print("do a contains then a token check with tdb")
 
-    def auth_user(self):
-        self.udict
-        print("CHECK UDICT FOR USER IF FOUND GENERATE TOKEN WITH TDB")
+    def auth_user(self, payload):
+        name = self.parse_name(payload)
+        if name in self.udict:
+            return self.tdb.gen_token(name)
+        else:
+            print("User not found!!!")
+            # TODO:FIGURE OUT FAILURE RETURN
+            return 000000000
 
-    def parse_name(self):
+    def parse_name(self, payload):
+        name_len = int(payload[12:14])
+        end_pos = 14+name_len
+        name_out = payload[14:end_pos]
         print("PARSE NAME FROM INC DATA")
+        return name_out
 
-    def parse_token(self):
+    def parse_token(self, payload):
         print("PARSE TOKEN FROM INC DATA")
+        return 000000000
 
 
 class TokenDB:

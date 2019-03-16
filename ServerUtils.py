@@ -40,9 +40,15 @@ def receive(sock_key, active_db, user_db):
         # Store token with socket package
         sock_key.data.tok = user_db.auth_user(data)
 
-        # Generate ACK msg for client
-        msg = gen_auth_ack(sock_key.data.tok)
-        cli_conn.send(msg.encode("ascii"))
+        # TODO: ENSURE TOKEN IS NOT ALL ZERO FOR FAILURE
+        if sock_key.data.tok >= 100000000:
+            # Generate ACK msg for client
+            msg = gen_auth_ack(sock_key.data.tok)
+            cli_conn.send(msg.encode("ascii"))
+        else:
+            # Generate FAIL msg for client
+            msg = gen_fail_ack(sock_key.data.tok)
+            cli_conn.send(msg.encode("ascii"))
 
     else:
         # Check if user is logged in , then verify authorization token
@@ -99,4 +105,9 @@ def is_logged_in(token):
 
 def gen_auth_ack(token):
     msg_out = 'ATS' + str(token)
+    return msg_out
+
+
+def gen_fail_ack(token):
+    msg_out = 'ATF' + str(token)
     return msg_out

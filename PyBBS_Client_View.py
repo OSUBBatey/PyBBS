@@ -82,7 +82,8 @@ class LoginFrame(tk.Frame):
 
     def login2server(self):
         self.get_info()
-        if self.master.auth_user():
+        test = self.master.auth_user()
+        if test:
             messagebox.showinfo("Success!!!", "Logged in as: " + self.master.model.get_user())
         else:
             messagebox.showinfo("Failure!!!", "Invalid Password!!! Please Try Again!!!")

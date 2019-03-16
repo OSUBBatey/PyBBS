@@ -59,7 +59,13 @@ class UserDB:
     def auth_user(self, payload):
         name = self.parse_name(payload)
         if name in self.udict:
-            return self.tdb.gen_token(name)
+            # TODO: CHECK HERE FOR PASSWORD FIGURE OUT FAILURE
+            password = self.parse_pword(payload)
+            if self.udict[name] == password:
+                return self.tdb.gen_token(name)
+            else:
+                return '000000000'
+
         else:
             # TODO: PROMPT FOR NEW USER IF TIME ALLOWS
             print("User not found!!!")

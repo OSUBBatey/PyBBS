@@ -74,10 +74,10 @@ class UserDB:
             return self.tdb.gen_token(name)
 
     def parse_name(self, payload):
+        assert len(payload) >= 14, "Invalid Data Header!!!"
         name_len = int(payload[12:14])
         end_pos = 14+name_len
         name_out = payload[14:end_pos]
-        print("PARSE NAME FROM INC DATA")
         return name_out
 
     def parse_token(self, payload):

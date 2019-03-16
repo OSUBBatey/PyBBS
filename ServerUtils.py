@@ -29,8 +29,10 @@ def receive(sock_key, active_db, user_db):
         inc_data = cli_conn.recv(MSG_SIZE)
     except socket.error():
         print("Socket Receive Failure!!!!")
-        exit()
+        quit()
         # TODO: BREAK PROGRAM/SOCKET on fail
+        # Halt on Closed Socket
+        assert inc_data, "Socket is Closed"
 
     # Check incoming operation
     action = parse_header(inc_data.decode())

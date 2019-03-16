@@ -54,12 +54,10 @@ class UserDB:
         else:
             print("Must Login for Authorization!")
             return False
-        # TODO: FULFILL PRINT COMMANDS BELOW
 
     def auth_user(self, payload):
-        name = self.parse_name(payload)
+        name = self.parse_name(payload).lower()
         if name in self.udict:
-            # TODO: CHECK HERE FOR PASSWORD FIGURE OUT FAILURE
             password = self.parse_pword(payload)
             if self.udict[name] == password:
                 return self.tdb.gen_token(name)
@@ -68,12 +66,11 @@ class UserDB:
 
         else:
             # TODO: PROMPT FOR NEW USER IF TIME ALLOWS
+            # TODO:OTHERWISE CURRENTLY JUST CREATE A NEW USER IF NOT FOUND
             print("User not found!!!")
             print("Creating new user")
             pword = self.parse_pword(payload)
             self.add_user(name, pword)
-            # TODO:OTHERWISE CURRENTLY JUST CREATE A NEW USER IF NOT FOUND
-
             return self.tdb.gen_token(name)
 
     def parse_name(self, payload):
@@ -84,8 +81,9 @@ class UserDB:
         return name_out
 
     def parse_token(self, payload):
+
         print("PARSE TOKEN FROM INC DATA")
-        return 000000000
+        return payload[3:12]
 
     def parse_pword(self, payload):
         name_len = int(payload[12:14])

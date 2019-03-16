@@ -40,7 +40,7 @@ def receive(sock_key, active_db, user_db):
         # Store token with socket package
         sock_key.data.tok = user_db.auth_user(data)
 
-        # TODO: ENSURE TOKEN IS NOT ALL ZERO FOR FAILURE
+        # Ensure Token is in the proper range else failure has occurred
         if sock_key.data.tok >= 100000000:
             # Generate ACK msg for client
             msg = gen_auth_ack(sock_key.data.tok)
@@ -61,7 +61,6 @@ def receive(sock_key, active_db, user_db):
                 m_out = "Message Written!!!"
                 cli_conn.send(m_out.encode("ascii"))
             elif action == 'R':
-                # TODO:Prepare read
                 active_db.read(cli_conn)
             else:
                     print("INVALID OPERATION REQUEST")
@@ -92,7 +91,6 @@ def parse_header(payload):
     else:
         print("INVALID HEADER FORMAT")
         # TODO: make possible to read/write in one message by parsing through data
-        # TODO: make auth command for access/login authorization
         return 'INV'
 
 

@@ -81,7 +81,6 @@ class LoginFrame(tk.Frame):
         self.master.model.set_pword(self.pword_entry.get())
 
     def login2server(self):
-        # TODO: AUTHORIZE USER
         self.get_info()
         if self.master.auth_user():
             messagebox.showinfo("Success!!!", "Logged in as: " + self.master.model.get_user())

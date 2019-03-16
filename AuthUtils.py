@@ -1,4 +1,5 @@
 import random
+import csv
 
 
 class UserDB:
@@ -8,12 +9,17 @@ class UserDB:
             self.udict = dict()
         else:
             self.udict = db
-
+        self.load_db()
         self.tdb = TokenDB()
+
+    def add_user_no_file(self, user, pword):
+        if self.contains(user) is False:
+            self.udict[user] = pword
 
     def add_user(self, user, pword):
         if self.contains(user) is False:
             self.udict[user] = pword
+            self.user_to_file(user, pword)
 
     def contains(self, uname):
         if uname in self.udict:
@@ -81,6 +87,27 @@ class UserDB:
         pword_out = payload[end_pos:]
         print("PARSE NAME FROM INC DATA")
         return pword_out
+
+    def user_to_file(self, uname, pword):
+        file = open("ulist.csv", "a+")
+        file.write(uname + "," + pword + "\n")
+        file.close()
+
+    def load_db(self):
+        try:
+            file = open("ulist.csv", "r")
+            csv_reader = csv.reader(file, delimiter=',')
+            count = 0
+            for row in csv_reader:
+                if count == 0:
+                    count = 1
+                    pass
+                else:
+                    self.add_user_no_file(row[0], row[1])
+        except IOError:
+            file = open("ulist.csv", "a+")
+            file.write("User,Pass\n")
+            pass
 
 
 class TokenDB:

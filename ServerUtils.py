@@ -1,5 +1,6 @@
 import types
 import selectors
+import socket
 import tkinter as tk
 toaster_out = tk.Tk()
 MSG_SIZE = 1024
@@ -10,7 +11,6 @@ def queue_socket(sock, p_list):
     print('connection established @', addr)
     cli_sock.setblocking(False)
     payload = types.SimpleNamespace(addr=addr, data_in="", data_out="", sel=p_list, tok=000000000)
-
     event = selectors.EVENT_READ
     p_list.register(cli_sock, event, data=payload)
 
@@ -25,14 +25,30 @@ def process_current(s_key, e_mask, db, udb):
 
 def receive(sock_key, active_db, user_db):
     cli_conn = sock_key.fileobj
-    inc_data = cli_conn.recv(MSG_SIZE)
+    try:
+        inc_data = cli_conn.recv(MSG_SIZE)
+    except socket.error():
+        print("Socket Receive Failure!!!!")
+        exit()
+        # TODO: BREAK PROGRAM/SOCKET on fail
 
-    if inc_data:
+    # Check incoming operation
+    action = parse_header(inc_data.decode())
+
+    if action == 'A':
+        data = inc_data.decode()
+        # Store token with socket package
+        sock_key.data.tok = user_db.auth_user(data)
+
+        # Generate ACK msg for client
+        msg = gen_auth_ack(sock_key.data.tok)
+        cli_conn.send(msg.encode("ascii"))
+
+    else:
         # Check if user is logged in , then verify authorization token
         if is_logged_in(sock_key.data.tok) and user_db.is_auth(inc_data.decode()):
 
             # perform operations
-            action = parse_header(inc_data.decode())
             # TODO: SIMPLIFY THIS STUFF
             if action == 'W':
                 active_db.write(inc_data.decode()[3:])
@@ -44,22 +60,9 @@ def receive(sock_key, active_db, user_db):
             else:
                     print("INVALID OPERATION REQUEST")
         else:
-            print('stuff')
-            # TODO: SEND USER NOT FOUND MESSAGE
-            # TODO: CREATE LOGIN DIALOGUE / MODULE
+            print('Invalid Credentials!!!!')
+            # TODO: SEND INVALID CREDENTIAL MESSAGE
             # authorize failed .. tell client to check credential and resend request
-            user_db.auth_user(inc_data)
-        #  msg = inc_data.decode()
-
-        # if msg[:2] == 'EK':
-        #    m_out = "MAIL MO FO!!!!"
-        #    cli_conn.send(m_out.encode("ascii"))
-
-        # elif msg[:2] == 'DS':
-            # test = tk.Label(toaster_out, text=inc_data.decode()[2:])
-            # test.pack()
-            # toaster_out.mainloop()
-            #   print(inc_data.decode()[2:])
 
 
 def send(sock_key, active_db):
@@ -68,8 +71,11 @@ def send(sock_key, active_db):
 
 
 def parse_header(payload):
-    plntxt = payload.decode()[:3]
-    if plntxt == 'WDB':
+    plntxt = payload[:3]
+    if plntxt == 'AUT':
+        print("AUTHORIZATION REQUEST")
+        return 'A'
+    elif plntxt == 'WDB':
         print("CALL WRITE TO DATABASE")
         print("RETURN SUCCESS")
         return 'W'
@@ -89,3 +95,8 @@ def is_logged_in(token):
         return False
     else:
         return True
+
+
+def gen_auth_ack(token):
+    msg_out = 'ATS' + str(token)
+    return msg_out

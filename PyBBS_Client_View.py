@@ -73,6 +73,14 @@ class LoginFrame(tk.Frame):
     def swap_frame(self):
         self.master.swap_frame(ServConnFrame)
 
+    def get_info(self):
+        # Get User Name
+        self.master.model.set_user(self.user_entry.get())
+
+        # Get Password
+        self.master.model.set_pword(self.pword_entry.get())
+
     def login2server(self):
         # TODO: AUTHORIZE USER
-        print("")
+        self.get_info()
+        self.master.auth_user()

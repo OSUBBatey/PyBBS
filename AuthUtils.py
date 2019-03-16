@@ -12,7 +12,7 @@ class UserDB:
         self.tdb = TokenDB()
 
     def add_user(self, user, pword):
-        if self.udict.contains(user) is False:
+        if self.contains(user) is False:
             self.udict[user] = pword
 
     def contains(self, uname):
@@ -55,9 +55,14 @@ class UserDB:
         if name in self.udict:
             return self.tdb.gen_token(name)
         else:
+            # TODO: PROMPT FOR NEW USER IF TIME ALLOWS
             print("User not found!!!")
-            # TODO:FIGURE OUT FAILURE RETURN
-            return 000000000
+            print("Creating new user")
+            pword = self.parse_pword(payload)
+            self.add_user(name, pword)
+            # TODO:OTHERWISE CURRENTLY JUST CREATE A NEW USER IF NOT FOUND
+
+            return self.tdb.gen_token(name)
 
     def parse_name(self, payload):
         name_len = int(payload[12:14])
@@ -70,11 +75,18 @@ class UserDB:
         print("PARSE TOKEN FROM INC DATA")
         return 000000000
 
+    def parse_pword(self, payload):
+        name_len = int(payload[12:14])
+        end_pos = 14+name_len
+        pword_out = payload[end_pos:]
+        print("PARSE NAME FROM INC DATA")
+        return pword_out
+
 
 class TokenDB:
 
     def __init__(self):
-        self.tdb = []
+        self.tdb = {}
 
     def gen_token(self, user):
         temptoken = random.randint(100000000, 999999999)

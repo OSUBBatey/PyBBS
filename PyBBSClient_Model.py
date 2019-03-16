@@ -7,6 +7,7 @@ class ClientModel:
         self.msgin = None
         self.msgout = None
         self.socket = None
+        self.token = 000000000
 
     def set_pword(self, data_in):
         self.pword = data_in
@@ -51,3 +52,9 @@ class ClientModel:
 
     def get_socket(self):
         return self.socket
+
+    def set_token(self, data_in):
+        self.token = data_in
+
+    def get_token(self):
+        return self.token

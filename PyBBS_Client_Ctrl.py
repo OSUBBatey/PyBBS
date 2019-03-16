@@ -51,7 +51,7 @@ class PyClientCtrl(tk.Tk):
         try:
             cli_sock.send(message.encode('ascii'))
             result = cli_sock.recv(1024)
-            return self.parse_token(result)
+            return self.parse_token(result.decode())
 
         except socket.error:
             print("ERROR SENDING/RECEIVING AUTHORIZATION TO/FROM CLIENT!!!")

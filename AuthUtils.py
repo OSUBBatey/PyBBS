@@ -13,12 +13,12 @@ class UserDB:
         self.tdb = TokenDB()
 
     def add_user_no_file(self, user, pword):
-        if self.contains(user) is False:
-            self.udict[user] = pword
+        if self.contains(user.lower()) is False:
+            self.udict[user.lower()] = pword
 
     def add_user(self, user, pword):
-        if self.contains(user) is False:
-            self.udict[user] = pword
+        if self.contains(user.lower()) is False:
+            self.udict[user.lower()] = pword
             self.user_to_file(user, pword)
 
     def contains(self, uname):
@@ -64,7 +64,7 @@ class UserDB:
             if self.udict[name] == password:
                 return self.tdb.gen_token(name)
             else:
-                return '000000000'
+                return 000000000
 
         else:
             # TODO: PROMPT FOR NEW USER IF TIME ALLOWS

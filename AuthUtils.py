@@ -56,6 +56,7 @@ class UserDB:
             return False
 
     def auth_user(self, payload):
+        # TODO: ADD LOGGING
         name = self.parse_name(payload).lower()
         if name in self.udict:
             password = self.parse_pword(payload)
@@ -81,15 +82,12 @@ class UserDB:
         return name_out
 
     def parse_token(self, payload):
-
-        print("PARSE TOKEN FROM INC DATA")
         return payload[3:12]
 
     def parse_pword(self, payload):
         name_len = int(payload[12:14])
         end_pos = 14+name_len
         pword_out = payload[end_pos:]
-        print("PARSE NAME FROM INC DATA")
         return pword_out
 
     def user_to_file(self, uname, pword):

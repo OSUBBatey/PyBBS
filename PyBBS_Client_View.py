@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import StringVar
+from tkinter import OptionMenu
 
 
 class ServConnFrame(tk.Frame):
@@ -71,7 +73,8 @@ class LoginFrame(tk.Frame):
         self.close_button.pack(anchor='s')
 
     def swap_frame(self):
-        self.master.swap_frame(ServConnFrame)
+        # Swap to User Choice
+        self.master.swap_frame(UserChoiceFrame)
 
     def get_info(self):
         # Get User Name
@@ -85,5 +88,40 @@ class LoginFrame(tk.Frame):
         test = self.master.auth_user()
         if test:
             messagebox.showinfo("Success!!!", "Logged in as: " + self.master.model.get_user())
+            self.swap_frame()
         else:
             messagebox.showinfo("Failure!!!", "Invalid Password!!! Please Try Again!!!")
+
+
+class UserChoiceFrame(tk.Frame):
+
+    def __init__(self, master=None, **kwargs):
+        tk.Frame.__init__(self, master, **kwargs)
+
+        # Option Box Actions
+        options = [
+            "Please Select an Option",
+            "Read Public DataBase",
+            "Write To Public DataBase",
+            "Logout and Exit"
+        ]
+        self.var_select = StringVar(master)
+        self.ovar = StringVar(master)
+        self.ovar.set(options[0])
+
+        self.obox = OptionMenu(master, self.ovar, *options, command=self.set_dropdown_value)
+        self.obox.pack()
+
+        self.close_button = tk.Button(self, text="Exit", command=self.quit)
+        self.close_button.pack(side=tk.BOTTOM)
+
+        self.testbutton = tk.Button(self, text="Test", command=self.get_dropdown_value)
+        self.testbutton.pack()
+
+    def set_dropdown_value(self, value):
+        print(value)
+        self.var_select = value
+
+    def get_dropdown_value(self):
+        print(self.var_select)
+        return self.var_select

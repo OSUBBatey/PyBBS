@@ -84,14 +84,12 @@ def parse_header(payload):
         return 'A'
     elif plntxt == 'WDB':
         print("CALL WRITE TO DATABASE")
-        print("RETURN SUCCESS")
         return 'W'
     elif plntxt == 'RDB':
         print("CALL READ FUNCTION ON DB")
-        print("FIND DATA AND SEND IT BACK")
         return 'R'
     else:
-        print("INVALID HEADER FORMAT")
+        print("INVALID OPCODE IN HEADER")
         # TODO: make possible to read/write in one message by parsing through data
         return 'INV'
 

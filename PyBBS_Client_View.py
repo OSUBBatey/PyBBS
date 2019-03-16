@@ -119,9 +119,7 @@ class UserChoiceFrame(tk.Frame):
         self.testbutton.pack()
 
     def set_dropdown_value(self, value):
-        print(value)
         self.var_select = value
 
     def get_dropdown_value(self):
-        print(self.var_select)
         return self.var_select

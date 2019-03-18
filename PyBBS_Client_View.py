@@ -115,7 +115,7 @@ class UserChoiceFrame(tk.Frame):
         self.close_button = tk.Button(self, text="Exit", command=self.quit)
         self.close_button.pack(side=tk.BOTTOM)
 
-        self.testbutton = tk.Button(self, text="Launch Selection", command=self.execute_dropdown_action())
+        self.testbutton = tk.Button(self, text="Launch Selection", command=self.execute_dropdown_action)
         self.testbutton.pack()
 
     def set_dropdown_value(self, value):
@@ -127,10 +127,13 @@ class UserChoiceFrame(tk.Frame):
     def execute_dropdown_action(self):
         action = self.get_dropdown_value()
         if action == self.options[1]:
-            # TODO: READ FROM PUB DB (CALL FROM CTRL)
-            return 1
+            # Action 1 : Read Public MessageBoard
+            rcv_file = self.master.srv_rd_req_pub()
+            file = open("test.txt", 'w')
+            file.write(rcv_file.decode())
+            file.close()
         elif action == self.options[2]:
-            # TODO: WRITE TO PUB DB
+            # TODO: WRITE TO PUB DB (CALL FROM CTRL)
             return 2
         elif action == self.options[3]:
             # TODO: CLOSE SOCKET/LOGOUT AND EXIT PROGRAM

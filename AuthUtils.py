@@ -124,7 +124,7 @@ class TokenDB:
 
     def verif_token(self, user, token):
         if user in self.tdb:
-            if self.tdb[user] == token:
+            if self.tdb[user] == int(token):
                 return True
             else:
                 return False

@@ -46,8 +46,10 @@ class PyClientCtrl(tk.Tk):
         message = self.create_message(action)
 
         try:
+            # Send Aut Message
             cli_sock.send(message.encode('ascii'))
             result = cli_sock.recv(1024)
+            # Check if valid token has been returned
             return self.parse_token(result.decode())
 
         except socket.error:
@@ -63,14 +65,32 @@ class PyClientCtrl(tk.Tk):
             return False
 
     def srv_rd_req_pub(self):
-        print("TBD")
+        # Get socket from model
+        cli_sock = self.model.get_socket()
+
+        # Create Read Request Message
+        action = "RDB"
+        message = self.create_message(action)
+
+        # Send Read Request To Server
+        try:
+            # Send Message
+            cli_sock.send(message.encode('ascii'))
+            result = cli_sock.recv(1024)
+        except socket.error:
+            print("ERROR SENDING/RECEIVING AUTHORIZATION TO/FROM CLIENT!!!")
+            # TODO: CLOSE SOCKET AND SHUTDOWN ON ERROR
+            self.quit()
+
+        # Process Server Response
+        return result
 
     def create_message(self, req):
         name_len = len(self.model.user)
         if name_len < 10:
             temp = str(name_len)
             name_len = '0' + temp
-        if self.model.get_token() < 100000000:
+        if int(self.model.get_token()) < 100000000:
             token = "000000000"
         else:
             token = str(self.model.get_token())

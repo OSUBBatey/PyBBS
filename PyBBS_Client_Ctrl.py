@@ -1,7 +1,9 @@
 import tkinter as tk
+import time
 import socket
 from PyBBS_Client_View import ServConnFrame
 from PyBBSClient_Model import ClientModel
+import os
 
 
 class PyClientCtrl(tk.Tk):
@@ -71,19 +73,26 @@ class PyClientCtrl(tk.Tk):
         # Create Read Request Message
         action = "RDB"
         message = self.create_message(action)
+        result = b''
 
         # Send Read Request To Server
         try:
             # Send Message
             cli_sock.send(message.encode('ascii'))
-            result = cli_sock.recv(1024)
+
         except socket.error:
             print("ERROR SENDING/RECEIVING AUTHORIZATION TO/FROM CLIENT!!!")
             # TODO: CLOSE SOCKET AND SHUTDOWN ON ERROR
-            self.quit()
+            exit()
 
-        # Process Server Response
-        return result
+        cli_sock.settimeout(.5)
+        while True:
+            try:
+                data = cli_sock.recv(1024)
+            except socket.timeout:
+                return result
+            # Accumulate data
+            result += data
 
     def create_message(self, req):
         name_len = len(self.model.user)
@@ -96,6 +105,10 @@ class PyClientCtrl(tk.Tk):
             token = str(self.model.get_token())
         # Create server request using model information
         return req + token + name_len + self.model.get_user() + self.model.get_pword()
+
+    def get_msg_size(self, file):
+        size = os.stat(file)
+        return size.st_size
 
 
 if __name__ == '__main__':

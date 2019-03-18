@@ -1,8 +1,8 @@
 import glob
-
 import datetime
 import os
 DEFAULT = "default"
+MAXSIZE = 1024
 
 
 class BBSDb:
@@ -26,7 +26,10 @@ class BBSDb:
         file.close()
 
     def read(self, csock):
+        # Open File and Get File Size
         file = open(self.name+".txt", "rb")
+
+        # Begin Transfer
         print("Beginning Transfer!!!")
         curr = file.read(1024)
         while curr:
@@ -52,3 +55,7 @@ class BBSDb:
 
     def contains(self, name):
         print("check DB list for name")
+
+    def get_msg_size(self, file):
+        size = os.stat(file)
+        return size.st_size

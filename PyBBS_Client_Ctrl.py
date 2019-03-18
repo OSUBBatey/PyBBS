@@ -84,12 +84,14 @@ class PyClientCtrl(tk.Tk):
             print("ERROR SENDING/RECEIVING AUTHORIZATION TO/FROM CLIENT!!!")
             # TODO: CLOSE SOCKET AND SHUTDOWN ON ERROR
             exit()
-
+        # Set time out to release socket when file transfer complete (REBUILD THIS LATER)
         cli_sock.settimeout(.5)
         while True:
             try:
                 data = cli_sock.recv(1024)
             except socket.timeout:
+                # Restore Blocking to Socket
+                cli_sock.settimeout(None)
                 return result
             # Accumulate data
             result += data

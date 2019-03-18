@@ -31,8 +31,7 @@ def receive(sock_key, active_db, user_db):
         print("Socket Receive Failure!!!!")
         quit()
         # TODO: BREAK PROGRAM/SOCKET on fail
-        # Halt on Closed Socket
-        assert inc_data, "Socket is Closed"
+        # Halt on Closed
 
     # Check incoming operation
     action = parse_header(inc_data.decode())

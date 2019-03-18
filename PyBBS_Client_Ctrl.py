@@ -40,13 +40,10 @@ class PyClientCtrl(tk.Tk):
 
         # Get socket from model
         cli_sock = self.model.get_socket()
-        name_len = len(self.model.user)
-        if name_len < 10:
-            temp = str(name_len)
-            name_len = '0' + temp
 
         # Create Authorization message using model information
-        message = "AUT" + '000000000' + name_len + self.model.user + self.model.pword
+        action = "AUT"
+        message = self.create_message(action)
 
         try:
             cli_sock.send(message.encode('ascii'))
@@ -64,6 +61,21 @@ class PyClientCtrl(tk.Tk):
             return True
         else:
             return False
+
+    def srv_rd_req_pub(self):
+        print("TBD")
+
+    def create_message(self, req):
+        name_len = len(self.model.user)
+        if name_len < 10:
+            temp = str(name_len)
+            name_len = '0' + temp
+        if self.model.get_token() < 100000000:
+            token = "000000000"
+        else:
+            token = str(self.model.get_token())
+        # Create server request using model information
+        return req + token + name_len + self.model.get_user() + self.model.get_pword()
 
 
 if __name__ == '__main__':

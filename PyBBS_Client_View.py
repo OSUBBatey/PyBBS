@@ -99,7 +99,7 @@ class UserChoiceFrame(tk.Frame):
         tk.Frame.__init__(self, master, **kwargs)
 
         # Option Box Actions
-        options = [
+        self.options = [
             "Please Select an Option",
             "Read Public DataBase",
             "Write To Public DataBase",
@@ -107,15 +107,15 @@ class UserChoiceFrame(tk.Frame):
         ]
         self.var_select = StringVar(master)
         self.ovar = StringVar(master)
-        self.ovar.set(options[0])
+        self.ovar.set(self.options[0])
 
-        self.obox = OptionMenu(master, self.ovar, *options, command=self.set_dropdown_value)
+        self.obox = OptionMenu(master, self.ovar, *self.options, command=self.set_dropdown_value)
         self.obox.pack()
 
         self.close_button = tk.Button(self, text="Exit", command=self.quit)
         self.close_button.pack(side=tk.BOTTOM)
 
-        self.testbutton = tk.Button(self, text="Test", command=self.get_dropdown_value)
+        self.testbutton = tk.Button(self, text="Launch Selection", command=self.execute_dropdown_action())
         self.testbutton.pack()
 
     def set_dropdown_value(self, value):
@@ -123,3 +123,15 @@ class UserChoiceFrame(tk.Frame):
 
     def get_dropdown_value(self):
         return self.var_select
+
+    def execute_dropdown_action(self):
+        action = self.get_dropdown_value()
+        if action == self.options[1]:
+            # TODO: READ FROM PUB DB (CALL FROM CTRL)
+            return 1
+        elif action == self.options[2]:
+            # TODO: WRITE TO PUB DB
+            return 2
+        elif action == self.options[3]:
+            # TODO: CLOSE SOCKET/LOGOUT AND EXIT PROGRAM
+            return 3

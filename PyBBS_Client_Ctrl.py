@@ -66,6 +66,7 @@ class PyClientCtrl(tk.Tk):
             return False
 
     def parse_token(self, data):
+        # Token is first 3 characters
         if data[:3] == 'ATS':
             tok_out = data[3:]
             self.model.set_token(tok_out)
@@ -73,7 +74,7 @@ class PyClientCtrl(tk.Tk):
         else:
             return False
 
-    def srv_rd_req_pub(self):
+    def srv_rd_req_pub(self):  # Send read request for public board to server
         # Get socket from model
         cli_sock = self.model.get_socket()
 
@@ -99,11 +100,17 @@ class PyClientCtrl(tk.Tk):
             except socket.timeout:
                 # Restore Blocking to Socket
                 cli_sock.settimeout(None)
-                return result
+                break
             # Accumulate data
             result += data
 
-    def create_message(self, req):
+        # TODO: Implement Error Checking
+        # TODO: TXTVAR1
+        file = open("test.txt", 'w')
+        file.write(result.decode())
+        file.close()
+
+    def create_message(self, req):  # Create Request Header where 'req' is the 3 letter OpCode for an action
         name_len = len(self.model.user)
         if name_len < 10:
             temp = str(name_len)

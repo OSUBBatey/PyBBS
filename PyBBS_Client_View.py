@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import StringVar
 from tkinter import OptionMenu
-from tkinter.tix import ScrolledWindow
 from tkinter import Text
 
 
@@ -131,20 +130,25 @@ class UserChoiceFrame(tk.Frame):
         action = self.get_dropdown_value()
         if action == self.options[1]:
             # Action 1 : Read Public MessageBoard
-            rcv_file = self.master.srv_rd_req_pub()
-            file = open("test.txt", 'w')
-            file.write(rcv_file.decode())
-            file.close()
-            self.disp_txt_win()
+            self.master.srv_rd_req_pub()
+            self.disp_rd_txt_win()
+
         elif action == self.options[2]:
+            # Action 2: Write to Public MessageBoard
             # TODO: WRITE TO PUB DB (CALL FROM CTRL)
-            return 2
+            self.disp_wrt_txt_win()
+
         elif action == self.options[3]:
             # TODO: CLOSE SOCKET/LOGOUT AND EXIT PROGRAM
             return 3
 
-    def disp_txt_win(self):
+    def disp_rd_txt_win(self):
+        # Load text box into model
         self.master.gen_txt_frame(RdTextFrame)
+
+    def disp_wrt_txt_win(self):
+        # Load text box into model
+        self.master.gen_txt_frame(WriteTextFrame)
 
 
 class RdTextFrame(tk.Frame):
@@ -152,22 +156,69 @@ class RdTextFrame(tk.Frame):
     def __init__(self, master=None, **kwargs):
         tk.Frame.__init__(self, master, **kwargs)
 
+        # Make frame an independent frame
         self.frame = tk.Toplevel(master)
         self.frame.wm_title("Public Message Board")
 
         self.frame.scroll = tk.Scrollbar(self.frame)
 
+        # Open file here
+        # TODO: TXTVAR1
+        # TODO: ADD file variable to change file to read or make it user dependent with a file path or name extension
         with open("test.txt", 'r') as file:
             self.frame.tbox = Text(self.frame, wrap=tk.WORD, yscrollcommand=self.frame.scroll.set)
             self.frame.tbox.insert(tk.INSERT, file.read())
             self.frame.tbox.config(state=tk.DISABLED)
 
+        # Setup widgets
         self.frame.close_button = tk.Button(self.frame, text="Close", command=self.frame.destroy)
         self.frame.scroll.config(command=self.frame.tbox.yview)
         self.frame.scroll.pack(side="right", fill="y")
         self.frame.tbox.pack(side="left", fill="both", expand=True)
         self.frame.close_button.pack(side="bottom", anchor='s')
 
+        # Set current frame to be only operable frame
         self.frame.transient(master)
         self.frame.grab_set()
         master.wait_window(self.frame)
+
+
+class WriteTextFrame(tk.Frame):
+
+    def __init__(self, master=None, **kwargs):
+        tk.Frame.__init__(self, master, **kwargs)
+
+        # Make frame an independent frame
+        self.frame = tk.Toplevel(master)
+        self.frame.wm_title("Write to Public Message Board")
+
+        self.frame.scroll = tk.Scrollbar(self.frame)
+
+        # Setup widgets
+        self.tbox = Text(self.frame, wrap=tk.WORD, yscrollcommand=self.frame.scroll.set)
+        self.frame.send_button = tk.Button(self.frame, text="Transmit Text", command=self.transmit)
+        self.frame.save_button = tk.Button(self.frame, text="Save Text", command=self.save)
+        self.frame.close_button = tk.Button(self.frame, text="Close", command=self.frame.destroy)
+        self.frame.scroll.config(command=self.tbox.yview)
+        self.frame.scroll.pack(side="right", fill="y")
+        self.tbox.pack(side="left", fill="both", expand=True)
+        self.frame.save_button.pack(anchor="n")
+        self.frame.send_button.pack(anchor="center")
+        self.frame.close_button.pack(side="bottom", anchor='s')
+
+        # Set current frame to be only operable frame
+        self.frame.transient(master)
+        self.frame.grab_set()
+        master.wait_window(self.frame)
+
+    def transmit(self):
+        self.tbox.get(1, 1)
+        print("TRANSMIT TO SERVER")
+        print("GIVE POPUP MSG")
+
+    def save(self):
+        print(self.tbox.get("1.0", 'end-1c'))
+        print("SAVE TO DISK")
+        print("GIVE POPUP MSG")
+
+

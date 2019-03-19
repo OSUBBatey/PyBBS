@@ -9,6 +9,7 @@ class BBSDb:
 
     def __init__(self):
         # TODO: CHANGE THIS TO BE A LOGFILE
+        # TODO: SET DEFAULT PUBLIC MESSAGE BOARD
         self.name = DEFAULT
         self.name_list = []
         self.active_db = DEFAULT
@@ -48,6 +49,7 @@ class BBSDb:
             for user in temp_list:
                 self.name_list.append(user[:-4])
         else:
+            # TODO: LOOK HERE FOR EXAMPLE TO DO USER FOLDERS CLIENT SIDE
             os.mkdir('UserDBStore')
 
     def generate_db(self):

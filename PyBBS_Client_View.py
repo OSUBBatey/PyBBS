@@ -144,7 +144,7 @@ class UserChoiceFrame(tk.Frame):
             return 3
 
     def disp_txt_win(self):
-        self.master.call_txt_frame(TextFrame)
+        self.master.gen_txt_frame(TextFrame)
 
 
 class TextFrame(tk.Frame):

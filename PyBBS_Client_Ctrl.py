@@ -26,7 +26,7 @@ class PyClientCtrl(tk.Tk):
         self.frame = frame(self)
         self.frame.pack()
 
-    def call_txt_frame(self, frame):
+    def gen_txt_frame(self, frame):
         if not self.tframe.winfo_exists():
             self.tframe = frame(self)
             self.tframe.pack()

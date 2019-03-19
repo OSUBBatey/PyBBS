@@ -110,6 +110,28 @@ class PyClientCtrl(tk.Tk):
         file.write(result.decode())
         file.close()
 
+    def srv_wrt_req_pub(self, data):  # Send write request for public board to server
+        # Get socket from model
+        cli_sock = self.model.get_socket()
+
+        # Create Read Request Message
+        action = "WDB"
+        message = self.create_message(action)
+
+        # Prepend Data with Request Header
+        message += data
+
+        # Send Write Request To Server
+        try:
+            # Send Message
+            cli_sock.sendall(message.encode('ascii'))
+            return True
+
+        except socket.error:
+            print("ERROR SENDING/RECEIVING AUTHORIZATION TO/FROM CLIENT!!!")
+            # TODO: CLOSE SOCKET ON ERROR
+            return False
+
     def create_message(self, req):  # Create Request Header where 'req' is the 3 letter OpCode for an action
         name_len = len(self.model.user)
         if name_len < 10:
@@ -125,6 +147,13 @@ class PyClientCtrl(tk.Tk):
     def get_msg_size(self, file):
         size = os.stat(file)
         return size.st_size
+
+    def close_connection(self):
+        cli_sock = self.model.get_socket()
+        message = 'XXX'
+        cli_sock.send(message.encode('ascii'))
+        print("Closing Connection")
+        cli_sock.close()
 
 
 if __name__ == '__main__':

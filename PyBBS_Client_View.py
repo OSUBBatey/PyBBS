@@ -103,8 +103,7 @@ class UserChoiceFrame(tk.Frame):
         self.options = [
             "Please Select an Option",
             "Read Public DataBase",
-            "Write To Public DataBase",
-            "Logout and Exit"
+            "Write To Public DataBase"
         ]
         self.var_select = StringVar(master)
         self.ovar = StringVar(master)
@@ -114,7 +113,7 @@ class UserChoiceFrame(tk.Frame):
         self.obox = OptionMenu(master, self.ovar, *self.options, command=self.set_dropdown_value)
         self.obox.pack()
 
-        self.close_button = tk.Button(self, text="Exit", command=self.quit)
+        self.close_button = tk.Button(self, text="Exit", command=self.exit_prog)
         self.close_button.pack(side=tk.BOTTOM)
 
         self.testbutton = tk.Button(self, text="Launch Selection", command=self.execute_dropdown_action)
@@ -135,12 +134,7 @@ class UserChoiceFrame(tk.Frame):
 
         elif action == self.options[2]:
             # Action 2: Write to Public MessageBoard
-            # TODO: WRITE TO PUB DB (CALL FROM CTRL)
             self.disp_wrt_txt_win()
-
-        elif action == self.options[3]:
-            # TODO: CLOSE SOCKET/LOGOUT AND EXIT PROGRAM
-            return 3
 
     def disp_rd_txt_win(self):
         # Load text box into model
@@ -149,6 +143,10 @@ class UserChoiceFrame(tk.Frame):
     def disp_wrt_txt_win(self):
         # Load text box into model
         self.master.gen_txt_frame(WriteTextFrame)
+
+    def exit_prog(self):
+        self.master.close_connection()
+        self.quit()
 
 
 class RdTextFrame(tk.Frame):
@@ -205,6 +203,7 @@ class WriteTextFrame(tk.Frame):
         self.frame.save_button.pack(anchor="n")
         self.frame.send_button.pack(anchor="center")
         self.frame.close_button.pack(side="bottom", anchor='s')
+        self.data = None
 
         # Set current frame to be only operable frame
         self.frame.transient(master)
@@ -212,17 +211,24 @@ class WriteTextFrame(tk.Frame):
         master.wait_window(self.frame)
 
     def transmit(self):
-        self.tbox.get(1, 1)
-        print("TRANSMIT TO SERVER")
-        print("GIVE POPUP MSG")
+        data = self.tbox.get("1.0", 'end-1c')
+        self.data = data
+        if self.master.srv_wrt_req_pub(self.data):
+            print("TRANSMIT TO SERVER")
+            messagebox.showinfo("Success!!!", "Message Written to Public Board!!!")
+        else:
+            print("FAIL SENDING MSG TO PUBLIC BOARD")
+            messagebox.showinfo("File Send Failure!!!", " Please Try Again!!!")
 
     def save(self):
         # Get Data and save it as "user.txt" where 'user' is current user from model
         data = self.tbox.get("1.0", 'end-1c')
         try:
             file = open(self.master.model.get_user()+".txt", 'a+')
+            file.write("\n")
             file.write(data)
-            messagebox.showinfo("Success!!!", "File Saved!!!")
             file.close()
+            messagebox.showinfo("Success!!!", "File Saved!!!")
+
         except IOError:
             messagebox.showinfo("Local File Write Failure!!!", " Please Try Again!!!")

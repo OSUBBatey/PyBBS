@@ -15,23 +15,22 @@ def queue_socket(sock, p_list):
     p_list.register(cli_sock, event, data=payload)
 
 
-def process_current(s_key, e_mask, db, udb):
+def process_current(s_key, e_mask, db, udb, p_list):
 
     if e_mask is selectors.EVENT_READ:
-        receive(s_key, db, udb)
+        receive(s_key, db, udb, p_list)
     elif e_mask is selectors.EVENT_WRITE:
         send(s_key, db)
 
 
-def receive(sock_key, active_db, user_db):
+def receive(sock_key, active_db, user_db, p_list):  # TODO: SPLIT THIS UP TO A SEND FUNCTION FOR OUTGOING
     cli_conn = sock_key.fileobj
+    inc_data = None
     try:
         inc_data = cli_conn.recv(MSG_SIZE)
     except socket.error():
         print("Socket Receive Failure!!!!")
-        exit()
-        # TODO: BREAK PROGRAM/SOCKET on fail
-        # Halt on Closed
+        exit()   # Halt on Closed
 
     # Check incoming operation
     action = parse_header(inc_data.decode())
@@ -50,24 +49,24 @@ def receive(sock_key, active_db, user_db):
             # Generate FAIL msg for client
             msg = gen_fail_ack(sock_key.data.tok)
             cli_conn.send(msg.encode("ascii"))
+    elif action == 'X':
+        print("Closing Connection")
+        cli_conn.close()
 
     else:
         # Check if user is logged in , then verify authorization token
         if is_logged_in(sock_key.data.tok) and user_db.is_auth(inc_data.decode()):
 
             # perform operations
-            # TODO: SIMPLIFY THIS STUFF
+            # TODO: SIMPLIFY THIS AND SPLIT TO READ/WRITE COMMANDS IN SELECTOR
             if action == 'W':
                 active_db.write(inc_data.decode()[3:])
-                m_out = "Message Written!!!"
-                cli_conn.send(m_out.encode("ascii"))
             elif action == 'R':
                 active_db.read(cli_conn)
             else:
                     print("INVALID OPERATION REQUEST")
         else:
             print('Invalid Credentials!!!!')
-            # TODO: SEND INVALID CREDENTIAL MESSAGE
             # authorize failed .. tell client to check credential and resend request
 
 
@@ -87,9 +86,11 @@ def parse_header(payload):
     elif plntxt == 'RDB':
         print("CALL READ FUNCTION ON DB")
         return 'R'
+    elif plntxt == 'XXX':
+        print("CALL READ FUNCTION ON DB")
+        return 'X'
     else:
         print("INVALID OPCODE IN HEADER")
-        # TODO: make possible to read/write in one message by parsing through data
         return 'INV'
 
 

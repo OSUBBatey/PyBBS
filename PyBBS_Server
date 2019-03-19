@@ -45,7 +45,7 @@ while True:
             queue_socket(s_key.fileobj, port_list)
 
         else:
-            process_current(s_key, event_mask, master_DB, auth_DB)
+            process_current(s_key, event_mask, master_DB, auth_DB, port_list)
     if stop_loop:
         break
 

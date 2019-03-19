@@ -144,10 +144,10 @@ class UserChoiceFrame(tk.Frame):
             return 3
 
     def disp_txt_win(self):
-        self.master.gen_txt_frame(TextFrame)
+        self.master.gen_txt_frame(RdTextFrame)
 
 
-class TextFrame(tk.Frame):
+class RdTextFrame(tk.Frame):
 
     def __init__(self, master=None, **kwargs):
         tk.Frame.__init__(self, master, **kwargs)
@@ -160,6 +160,7 @@ class TextFrame(tk.Frame):
         with open("test.txt", 'r') as file:
             self.frame.tbox = Text(self.frame, wrap=tk.WORD, yscrollcommand=self.frame.scroll.set)
             self.frame.tbox.insert(tk.INSERT, file.read())
+            self.frame.tbox.config(state=tk.DISABLED)
 
         self.frame.close_button = tk.Button(self.frame, text="Close", command=self.frame.destroy)
         self.frame.scroll.config(command=self.frame.tbox.yview)

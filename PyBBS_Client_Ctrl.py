@@ -1,5 +1,4 @@
 import tkinter as tk
-import time
 import socket
 from PyBBS_Client_View import ServConnFrame
 from PyBBSClient_Model import ClientModel
@@ -27,15 +26,16 @@ class PyClientCtrl(tk.Tk):
         self.frame.pack()
 
     def gen_txt_frame(self, frame):
-        if not self.tframe.winfo_exists():
             self.tframe = frame(self)
-            self.tframe.pack()
 
     def server_connect(self):
+        # Client Socket
         cli_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
+            # Create socket connections and store in model
             self.model.set_socket(cli_sock)
             self.model.get_socket().connect((self.model.get_host(), self.model.get_port()))
+
             # If connection successful , update model , return true
             # cli_sock.connect((self.model.get_host(), self.model.get_port()))
             print("Connected to " + self.model.get_host() + " @", self.model.get_port())

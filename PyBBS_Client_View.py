@@ -148,7 +148,6 @@ class UserChoiceFrame(tk.Frame):
 
 
 class TextFrame(tk.Frame):
-    # TODO:REWRITE THIS CLASS
 
     def __init__(self, master=None, **kwargs):
         tk.Frame.__init__(self, master, **kwargs)
@@ -161,12 +160,13 @@ class TextFrame(tk.Frame):
         with open("test.txt", 'r') as file:
             self.frame.tbox = Text(self.frame, wrap=tk.WORD, yscrollcommand=self.frame.scroll.set)
             self.frame.tbox.insert(tk.INSERT, file.read())
-            self.frame.tbox.pack()
 
-        self.frame.close_button = tk.Button(self.frame, text="Close", command=self.close_text)
-        self.frame.close_button.pack(anchor='s')
+        self.frame.close_button = tk.Button(self.frame, text="Close", command=self.frame.destroy)
+        self.frame.scroll.config(command=self.frame.tbox.yview)
+        self.frame.scroll.pack(side="right", fill="y")
+        self.frame.tbox.pack(side="left", fill="both", expand=True)
+        self.frame.close_button.pack(side="bottom", anchor='s')
 
-    def close_text(self):
-        self.frame.destroy()
-        self.destroy()
-
+        self.frame.transient(master)
+        self.frame.grab_set()
+        master.wait_window(self.frame)

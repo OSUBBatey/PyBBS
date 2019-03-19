@@ -15,6 +15,8 @@ class PyClientCtrl(tk.Tk):
         self.model = ClientModel()
         self.frame = ServConnFrame(self)
         self.frame.pack()
+        self.tframe = tk.Frame()
+        self.tframe.destroy()
 
     def run(self):
         self.root.mainloop()
@@ -23,6 +25,11 @@ class PyClientCtrl(tk.Tk):
         self.frame.pack_forget()
         self.frame = frame(self)
         self.frame.pack()
+
+    def call_txt_frame(self, frame):
+        if not self.tframe.winfo_exists():
+            self.tframe = frame(self)
+            self.tframe.pack()
 
     def server_connect(self):
         cli_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

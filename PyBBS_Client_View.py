@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import StringVar
 from tkinter import OptionMenu
+from tkinter.tix import ScrolledWindow
+from tkinter import Text
 
 
 class ServConnFrame(tk.Frame):
@@ -108,6 +110,7 @@ class UserChoiceFrame(tk.Frame):
         self.var_select = StringVar(master)
         self.ovar = StringVar(master)
         self.ovar.set(self.options[0])
+        self.sideWindow = tk.Frame()
 
         self.obox = OptionMenu(master, self.ovar, *self.options, command=self.set_dropdown_value)
         self.obox.pack()
@@ -132,9 +135,38 @@ class UserChoiceFrame(tk.Frame):
             file = open("test.txt", 'w')
             file.write(rcv_file.decode())
             file.close()
+            self.disp_txt_win()
         elif action == self.options[2]:
             # TODO: WRITE TO PUB DB (CALL FROM CTRL)
             return 2
         elif action == self.options[3]:
             # TODO: CLOSE SOCKET/LOGOUT AND EXIT PROGRAM
             return 3
+
+    def disp_txt_win(self):
+        self.master.call_txt_frame(TextFrame)
+
+
+class TextFrame(tk.Frame):
+    # TODO:REWRITE THIS CLASS
+
+    def __init__(self, master=None, **kwargs):
+        tk.Frame.__init__(self, master, **kwargs)
+
+        self.frame = tk.Toplevel(master)
+        self.frame.wm_title("Public Message Board")
+
+        self.frame.scroll = tk.Scrollbar(self.frame)
+
+        with open("test.txt", 'r') as file:
+            self.frame.tbox = Text(self.frame, wrap=tk.WORD, yscrollcommand=self.frame.scroll.set)
+            self.frame.tbox.insert(tk.INSERT, file.read())
+            self.frame.tbox.pack()
+
+        self.frame.close_button = tk.Button(self.frame, text="Close", command=self.close_text)
+        self.frame.close_button.pack(anchor='s')
+
+    def close_text(self):
+        self.frame.destroy()
+        self.destroy()
+

@@ -3,6 +3,7 @@ import datetime
 import os
 DEFAULT = "default"
 MAXSIZE = 1024
+LOGFILE = "server.log"
 
 
 class BBSDb:
@@ -11,9 +12,12 @@ class BBSDb:
         # TODO: CHANGE THIS TO BE A LOGFILE
         # TODO: SET DEFAULT PUBLIC MESSAGE BOARD
         self.name = DEFAULT
+        pub_db = open(DEFAULT+".txt", "a+")
+        pub_db.close()
         self.name_list = []
         self.active_db = DEFAULT
-        file = open(DEFAULT+".txt", "a+")
+        self.log = LOGFILE
+        file = open(LOGFILE, "a+")
         file.write("PyBBS Server Log\n")
         file.write("Starting Server ---------\n")
         date = str(datetime.datetime.now())
@@ -22,7 +26,7 @@ class BBSDb:
         self.generate_db_list()
 
     def write(self, message):
-        file = open(self.name+".txt", "a")
+        file = open(self.name+".txt", "a+")
         file.write(message+"\n")
         file.close()
 

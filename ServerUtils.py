@@ -52,6 +52,7 @@ def receive(sock_key, active_db, user_db, p_list):  # TODO: SPLIT THIS UP TO A S
     elif action == 'X':
         # TODO: IMPROVE LOGOUT NOT ALLOWING OTHER USERS OR REAUTH MAY NEED TO CLEAR DATA
         print("Closing Connection")
+        p_list.unregister(cli_conn)
         cli_conn.close()
 
     else:
@@ -63,6 +64,7 @@ def receive(sock_key, active_db, user_db, p_list):  # TODO: SPLIT THIS UP TO A S
             if action == 'W':
                 # TODO: NEED TO DILINEATE BETWEEN PUBLIC / PRIVATE DATA (USE HEADER?)
                 # TODO: FUNCTION TO STRIP PASSWORD AND HEADER DATA BEFORE WRITE
+                # TODO: STRIP WRITE COMMAND OUT OF THE DB
                 active_db.write(inc_data.decode()[3:])
             elif action == 'R':
                 active_db.read(cli_conn)

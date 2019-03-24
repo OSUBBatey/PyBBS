@@ -1,6 +1,5 @@
 import types
 import selectors
-import socket
 import tkinter as tk
 toaster_out = tk.Tk()
 MSG_SIZE = 1024
@@ -28,7 +27,7 @@ def receive(sock_key, active_db, user_db, p_list):  # TODO: SPLIT THIS UP TO A S
     inc_data = None
     try:
         inc_data = cli_conn.recv(MSG_SIZE)
-    except socket.error():
+    except IOError:
         print("Socket Receive Failure!!!!")
         exit()   # Halt on Closed
 
@@ -50,7 +49,6 @@ def receive(sock_key, active_db, user_db, p_list):  # TODO: SPLIT THIS UP TO A S
             msg = gen_fail_ack(sock_key.data.tok)
             cli_conn.send(msg.encode("ascii"))
     elif action == 'X':
-        # TODO: IMPROVE LOGOUT NOT ALLOWING OTHER USERS OR REAUTH MAY NEED TO CLEAR DATA
         print("Closing Connection")
         p_list.unregister(cli_conn)
         cli_conn.close()
@@ -65,7 +63,11 @@ def receive(sock_key, active_db, user_db, p_list):  # TODO: SPLIT THIS UP TO A S
                 # TODO: NEED TO DILINEATE BETWEEN PUBLIC / PRIVATE DATA (USE HEADER?)
                 # TODO: FUNCTION TO STRIP PASSWORD AND HEADER DATA BEFORE WRITE
                 # TODO: STRIP WRITE COMMAND OUT OF THE DB
-                active_db.write(inc_data.decode()[3:])
+                msg_in = inc_data.decode()
+                name = parse_name(msg_in)
+                name = name + ' : '
+                msg_in = name + strip_header(msg_in)
+                active_db.write(msg_in)
             elif action == 'R':
                 active_db.read(cli_conn)
             else:
@@ -113,4 +115,23 @@ def gen_auth_ack(token):
 
 def gen_fail_ack(token):
     msg_out = 'ATF' + str(token)
+    return msg_out
+
+
+def parse_name(payload):
+    assert len(payload) >= 14, "Invalid Data Header!!!"
+    name_len = int(payload[12:14])
+    end_pos = 14+name_len
+    name_out = payload[14:end_pos]
+    return name_out
+
+
+def strip_header(payload):
+    end_marker = payload.find('EOM')
+    if end_marker > -1:
+        msg_out = payload[end_marker+3:]
+    else:
+        print("Invalid Header!!!!")
+        msg_out = payload
+
     return msg_out

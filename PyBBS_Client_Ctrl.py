@@ -117,6 +117,7 @@ class PyClientCtrl(tk.Tk):
         # Create Read Request Message
         action = "WDB"
         message = self.create_message(action)
+        message = self.add_end_of_msg(message)
 
         # Prepend Data with Request Header
         message += data
@@ -143,6 +144,9 @@ class PyClientCtrl(tk.Tk):
             token = str(self.model.get_token())
         # Create server request using model information
         return req + token + name_len + self.model.get_user() + self.model.get_pword()
+
+    def add_end_of_msg(self, payload):
+        return payload + 'EOM'
 
     def get_msg_size(self, file):
         size = os.stat(file)

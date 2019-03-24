@@ -47,7 +47,7 @@ class UserDB:
             return False
 
     def is_auth(self, payload):
-        name = self.parse_name(payload)
+        name = self.parse_name(payload).lower()
         token = self.parse_token(payload)
         if name in self.udict:
             return self.tdb.verif_token(name, token)

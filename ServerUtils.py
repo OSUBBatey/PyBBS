@@ -36,8 +36,14 @@ def receive(sock_key, active_db, user_db, p_list):  # TODO: SPLIT THIS UP TO A S
 
     if action == 'A':
         data = inc_data.decode()
-        # Store token with socket package
-        sock_key.data.tok = user_db.auth_user(data)
+        name = parse_name(data)
+
+        if user_db.tdb.is_registered(name):
+            print("User already logged in!!!")
+            sock_key.data.tok = 000000000
+        else:
+            # Store token with socket package
+            sock_key.data.tok = user_db.auth_user(data)
 
         # Ensure Token is in the proper range else failure has occurred
         if sock_key.data.tok >= 100000000:
@@ -55,7 +61,7 @@ def receive(sock_key, active_db, user_db, p_list):  # TODO: SPLIT THIS UP TO A S
 
     else:
         # Check if user is logged in , then verify authorization token
-        if is_logged_in(sock_key.data.tok) and user_db.is_auth(inc_data.decode()):
+        if has_token(sock_key.data.tok) and user_db.is_auth(inc_data.decode()):
 
             # perform operations
             # TODO: SIMPLIFY THIS AND SPLIT TO READ/WRITE COMMANDS IN SELECTOR
@@ -78,7 +84,7 @@ def receive(sock_key, active_db, user_db, p_list):  # TODO: SPLIT THIS UP TO A S
 
 def send(sock_key, active_db):
     # TODO:READ FROM DB
-    print()
+    print("NOT YET IMPLEMENTED!!!")
 
 
 def parse_header(payload):
@@ -100,7 +106,11 @@ def parse_header(payload):
         return 'INV'
 
 
-def is_logged_in(token):
+def is_logged_in(uname):
+    print("Check name")
+
+
+def has_token(token):
     if token < 100000000:
         return False
     else:

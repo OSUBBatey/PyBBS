@@ -91,7 +91,7 @@ class LoginFrame(tk.Frame):
             messagebox.showinfo("Success!!!", "Logged in as: " + self.master.model.get_user())
             self.swap_frame()
         else:
-            messagebox.showinfo("Failure!!!", "Invalid Password!!! Please Try Again!!!")
+            messagebox.showinfo("Failure!!!", "Login Failure!!! Please Try Again!!!")
 
 
 class UserChoiceFrame(tk.Frame):

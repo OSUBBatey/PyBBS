@@ -47,7 +47,7 @@ class BBSDb:
         print("SET ACTIVE DB")
 
     def generate_db_list(self):
-        print("use glob to search local directory")
+        print("Finding or creating local directories...")
         if os.path.isdir('./UserDBStore'):
             temp_list = glob.iglob('./UserDbStore/*.txt')
             for user in temp_list:

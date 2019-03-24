@@ -135,3 +135,9 @@ class TokenDB:
         if user in self.tdb:
             if self.tdb[user] == token:
                 del self.tdb[user]
+
+    def is_registered(self, name):
+        if name in self.tdb:
+            return True
+        else:
+            return False

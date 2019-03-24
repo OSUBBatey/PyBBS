@@ -5,8 +5,11 @@ from ServerUtils import process_current
 from PyBBS_DB_Log_Utils import BBSDb
 from AuthUtils import UserDB
 
-HOST = '127.0.0.1'
-PORT = 55555
+HOST = socket.gethostbyname(socket.gethostname())
+print("Local Address is: ", str(HOST))
+print("Using this as the server address!!!")
+print()
+PORT = int(input("Please designate a Port # to use: "))
 PORTALT = 44444
 MAX_CON = 1
 stop_loop = False

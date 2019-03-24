@@ -61,7 +61,6 @@ def receive(sock_key, active_db, user_db, p_list):  # TODO: SPLIT THIS UP TO A S
             # TODO: SIMPLIFY THIS AND SPLIT TO READ/WRITE COMMANDS IN SELECTOR
             if action == 'W':
                 # TODO: NEED TO DILINEATE BETWEEN PUBLIC / PRIVATE DATA (USE HEADER?)
-                # TODO: FUNCTION TO STRIP PASSWORD AND HEADER DATA BEFORE WRITE
                 # TODO: STRIP WRITE COMMAND OUT OF THE DB
                 msg_in = inc_data.decode()
                 name = parse_name(msg_in)

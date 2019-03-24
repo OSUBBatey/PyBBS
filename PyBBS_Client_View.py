@@ -210,6 +210,7 @@ class WriteTextFrame(tk.Frame):
         self.frame.grab_set()
         master.wait_window(self.frame)
 
+    # TODO: MOVE THESE BOTTOM TWO FUNCTIONS TO CTRL
     def transmit(self):
         data = self.tbox.get("1.0", 'end-1c')
         self.data = data
@@ -224,7 +225,7 @@ class WriteTextFrame(tk.Frame):
         # Get Data and save it as "user.txt" where 'user' is current user from model
         data = self.tbox.get("1.0", 'end-1c')
         try:
-            file = open(self.master.model.get_user()+".txt", 'a+')
+            file = open("UserDBStore/" + self.master.model.get_user()+".txt", 'a+')
             file.write("\n")
             file.write(data)
             file.close()

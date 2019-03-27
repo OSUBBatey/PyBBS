@@ -5,7 +5,37 @@ from ServerUtils import process_current
 from PyBBS_DB_Log_Utils import BBSDb
 from AuthUtils import UserDB
 
-HOST = socket.gethostbyname(socket.gethostname())
+# The method in the function below (get_local_ip) adapted from :
+# https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib
+# All credit for the initial creation goes to user : Jamieson Becker
+
+
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # dummy address to find default route
+        s.connect(('10.255.255.255', 1))
+        out = s.getsockname()[0]
+    except IOError:
+        # use loop-back in case of failure
+        out = '127.0.0.1'
+    finally:
+        s.close()
+    return out
+
+
+user_prompt = input("Would you like to Auto-detect the local server IP? (y or n) : ")
+if user_prompt is 'y':
+    print("Automatically detecting local IP!!!")
+    HOST = get_local_ip()
+elif user_prompt is 'n':
+    HOST = input("Enter the IP address you wish to use: ")
+else:
+    print("Unknown command! Defaulting to Auto-detect!!!")
+    print("Automatically detecting local IP!!!")
+    HOST = get_local_ip()
+
+
 print("Local Address is: ", str(HOST))
 print("Using this as the server address!!!")
 print()
@@ -53,3 +83,4 @@ while True:
         break
 
 serv_sock.close()
+

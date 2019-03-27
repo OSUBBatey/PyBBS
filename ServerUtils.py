@@ -1,7 +1,5 @@
 import types
 import selectors
-import tkinter as tk
-toaster_out = tk.Tk()
 MSG_SIZE = 1024
 
 
